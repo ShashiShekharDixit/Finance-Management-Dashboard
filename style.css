@@ -1,9 +1,17 @@
-body {
-  font-family: "Arial", sans-serif;
+/* Global Styles */
+* {
+  box-sizing: border-box;
   margin: 0;
-  padding: 20px;
-  background-color: #f4f4f4;
+  padding: 0;
 }
+
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f4f4;
+  padding: 20px;
+}
+
+/* Dashboard Container */
 .dashboard {
   max-width: 1200px;
   margin: 0 auto;
@@ -11,57 +19,181 @@ body {
   padding: 20px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
-.section {
-  margin-bottom: 20px;
+
+/* Heading */
+h1 {
+  font-size: 32px;
+  color: #495057;
+  text-align: center;
+  margin-bottom: 40px;
 }
-.financial-summary,
-.customer-summary {
+
+/* Section Styling */
+.section {
+  margin-bottom: 40px;
+}
+
+/* Financial Summary Cards */
+.financial-summary {
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
 }
+
 .summary-card {
   flex: 1;
-  margin: 0 10px;
-  padding: 15px;
+  margin: 10px;
+  padding: 20px;
   background-color: #e9ecef;
   text-align: center;
-  border-radius: 5px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
 }
+
+.summary-card:hover {
+  background-color: #d6d8db;
+  transform: translateY(-5px);
+}
+
+.summary-card h3 {
+  font-size: 22px;
+  color: #007bff;
+  margin-bottom: 10px;
+}
+
+.summary-card p {
+  font-size: 28px;
+  font-weight: bold;
+  color: #495057;
+}
+
+/* Add Transaction Form */
+.add-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+
+.add-form input,
+.add-form select {
+  flex: 1;
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  transition: border-color 0.3s ease;
+  margin-bottom: 10px;
+}
+
+.add-form input:focus,
+.add-form select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.add-form button {
+  padding: 12px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.add-form button:hover {
+  background-color: #0056b3;
+}
+
+/* Transactions Table */
 .transactions-table,
 .customer-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 10px;
+  margin-top: 20px;
 }
+
 .transactions-table th,
 .transactions-table td,
 .customer-table th,
 .customer-table td {
-  border: 1px solid #ddd;
-  padding: 10px;
+  padding: 12px;
   text-align: left;
+  border: 1px solid #ddd;
+  font-size: 16px;
 }
+
 .transactions-table th,
 .customer-table th {
   background-color: #007bff;
   color: white;
+  font-size: 18px;
 }
-.add-form {
-  display: flex;
-  margin-bottom: 20px;
+
+.transactions-table td,
+.customer-table td {
+  background-color: #f8f9fa;
 }
-.add-form input,
-.add-form select {
-  margin-right: 10px;
-  padding: 10px;
+
+.transactions-table tr:nth-child(even) td,
+.customer-table tr:nth-child(even) td {
+  background-color: #e9ecef;
 }
-.add-form button {
-  padding: 10px 15px;
-  background-color: #28a745;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
+
+/* Customer Selector */
 .customer-selector {
   margin-bottom: 20px;
+  text-align: center;
+}
+
+.customer-selector select {
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  width: 250px;
+  transition: border-color 0.3s ease;
+}
+
+.customer-selector select:focus {
+  border-color: #007bff;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  /* Financial Summary Cards */
+  .financial-summary {
+      flex-direction: column;
+      align-items: center;
+  }
+
+  .summary-card {
+      width: 100%;
+      margin-bottom: 15px;
+  }
+
+  /* Add Transaction Form */
+  .add-form {
+      flex-direction: column;
+      align-items: center;
+  }
+
+  .add-form input,
+  .add-form select,
+  .add-form button {
+      width: 100%;
+      margin-bottom: 10px;
+  }
+
+  /* Transactions Table */
+  .transactions-table th,
+  .transactions-table td,
+  .customer-table th,
+  .customer-table td {
+      font-size: 14px;
+      padding: 10px;
+  }
 }
