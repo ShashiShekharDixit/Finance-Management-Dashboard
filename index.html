@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Management Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="dashboard">
+        <h1>Finance Management Dashboard</h1>
+
+        <!-- Financial Summary -->
+        <div class="section financial-summary">
+            <div class="summary-card">
+                <h3>Pending GST</h3>
+                <p id="gst-amount">$0.00</p>
+            </div>
+            <div class="summary-card">
+                <h3>Paid GST</h3>
+                <p id="paid-gst-amount">$0.00</p>
+            </div>
+            <div class="summary-card">
+                <h3>Unpaid Bills</h3>
+                <p id="bills-count">0</p>
+            </div>
+            <div class="summary-card">
+                <h3>Paid Bills</h3>
+                <p id="paid-bills-count">0</p>
+            </div>
+            <div class="summary-card">
+                <h3>Total Receivables</h3>
+                <p id="receivables-amount">$0.00</p>
+            </div>
+        </div>
+
+        <!-- Add Transaction Form -->
+        <div class="section add-form">
+            <input type="text" id="customer-name" placeholder="Customer Name">
+            <input type="text" id="transaction-description" placeholder="Description">
+            <input type="number" id="transaction-amount" placeholder="Amount">
+            <select id="transaction-type">
+                <option value="Income">Income</option>
+                <option value="Expense">Expense</option>
+                <option value="GST">GST</option>
+                <option value="Bill">Bill</option>
+                <option value="Paid GST">Paid GST</option>
+                <option value="Paid Bill">Paid Bill</option>
+            </select>
+            <button onclick="addNewTransaction()">Add Transaction</button>
+        </div>
+
+        <!-- Transactions -->
+        <h2>All Transactions</h2>
+        <table class="transactions-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Customer</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Type</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="transactions-body"></tbody>
+        </table>
+
+        <!-- Customer Summary -->
+        <h2>Customer Transaction History</h2>
+        <div class="customer-selector">
+            <select id="customer-select" onchange="viewCustomerTransactions()">
+                <option value="">Select a Customer</option>
+            </select>
+        </div>
+        <table class="customer-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Type</th>
+                </tr>
+            </thead>
+            <tbody id="customer-body"></tbody>
+        </table>
+    </div>
+
+    <script src="financeManager.js"></script>
+</body>
+</html>
