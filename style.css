@@ -1,146 +1,243 @@
+:root {
+  --primary-color: #3498db;
+  --secondary-color: #2ecc71;
+  --background-color: #f4f4f8;
+  --card-background: #ffffff;
+  --text-primary: #2c3e50;
+  --text-secondary: #7f8c8d;
+  --border-color: #e0e4e8;
+  --accent-color: #e74c3c;
+}
+
 /* Global Styles */
 * {
-  box-sizing: border-box;
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
 body {
   font-family: 'Arial', sans-serif;
-  background-color: #f4f4f4;
-  padding: 20px;
+  background: linear-gradient(135deg, #f6f8f9 0%, #e5ebee 100%);
+  color: var(--text-primary);
+  line-height: 1.6;
 }
 
-/* Dashboard Container */
 .dashboard {
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 30px auto;
+  padding: 30px;
   background-color: white;
-  padding: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
+  position: relative;
+  overflow: hidden;
 }
 
-/* Heading */
-h1 {
-  font-size: 32px;
-  color: #495057;
-  text-align: center;
-  margin-bottom: 40px;
+.dashboard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
 }
 
-/* Section Styling */
-.section {
-  margin-bottom: 40px;
+/* Remove Button Styling */
+.remove-btn {
+  background-color: var(--accent-color); /* Red background */
+  color: white; /* Text color */
+  border: none; /* Remove default border */
+  padding: 8px 12px; /* Add padding */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Change cursor to pointer */
+  display: flex; /* Flex to align icon and text */
+  align-items: center; /* Vertically center items */
+  gap: 5px; /* Add space between icon and text */
+  font-size: 0.9rem; /* Smaller text size */
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+/* Remove Button Hover Effect */
+.remove-btn:hover {
+  background-color: #c0392b; /* Darker red on hover */
+  transform: translateY(-3px); /* Slight move upwards */
+}
+
+/* Remove Button Icon Styling */
+.remove-btn svg {
+  width: 16px;
+  height: 16px;
+  fill: white; /* Icon color */
+  transition: fill 0.3s ease;
+}
+
+/* Remove Button Hover - Icon Color Change */
+.remove-btn:hover svg {
+  fill: #f1c40f; /* Change icon color on hover */
 }
 
 /* Financial Summary Cards */
 .financial-summary {
   display: flex;
   justify-content: space-between;
-  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 30px;
+  perspective: 1000px;
 }
 
 .summary-card {
   flex: 1;
-  margin: 10px;
+  background-color: var(--card-background);
+  border-radius: 12px;
   padding: 20px;
-  background-color: #e9ecef;
   text-align: center;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  transition: all 0.3s ease;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+  transform-style: preserve-3d;
+}
+
+.summary-card::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.3) 0%, transparent 70%);
+  transform: rotate(-45deg);
+  opacity: 0;
+  transition: opacity 0.4s ease;
 }
 
 .summary-card:hover {
-  background-color: #d6d8db;
-  transform: translateY(-5px);
+  transform: rotateX(10deg) translateY(-10px);
+  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.15);
+}
+
+.summary-card:hover::after {
+  opacity: 1;
 }
 
 .summary-card h3 {
-  font-size: 22px;
-  color: #007bff;
+  color: var(--text-secondary);
   margin-bottom: 10px;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .summary-card p {
-  font-size: 28px;
-  font-weight: bold;
-  color: #495057;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  position: relative;
+  display: inline-block;
+}
+
+.summary-card p::before {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.summary-card:hover p::before {
+  transform: scaleX(1);
 }
 
 /* Add Transaction Form */
 .add-form {
   display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  justify-content: center;
-  margin-bottom: 40px;
+  gap: 10px;
+  margin-bottom: 20px;
+  background-color: var(--background-color);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.add-form input,
+.add-form input, 
 .add-form select {
   flex: 1;
   padding: 12px;
-  font-size: 16px;
-  border: 1px solid #ccc;
+  border: 2px solid transparent;
   border-radius: 8px;
-  transition: border-color 0.3s ease;
-  margin-bottom: 10px;
+  background-color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 }
 
-.add-form input:focus,
+.add-form input:focus, 
 .add-form select:focus {
-  border-color: #007bff;
+  border-color: var(--primary-color);
   outline: none;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
 }
 
 .add-form button {
   padding: 12px 20px;
-  background-color: #007bff;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
   color: white;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .add-form button:hover {
-  background-color: #0056b3;
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
-/* Transactions Table */
-.transactions-table,
-.customer-table {
+/* Animated Transactions Table */
+.transactions-table, .customer-table {
   width: 100%;
+  border-radius: 12px;
   border-collapse: collapse;
-  margin-top: 20px;
+  overflow: hidden;
+  animation: tableEntrance 0.7s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.transactions-table th,
-.transactions-table td,
-.customer-table th,
-.customer-table td {
+@keyframes tableEntrance {
+  from {
+      opacity: 0;
+      transform: translateY(20px);
+  }
+  to {
+      opacity: 1;
+      transform: translateY(0);
+  }
+}
+
+.transactions-table th, .customer-table th {
+  background: var(--primary-color);
+  color: white;
   padding: 12px;
   text-align: left;
-  border: 1px solid #ddd;
-  font-size: 16px;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-.transactions-table th,
-.customer-table th {
-  background-color: #007bff;
-  color: white;
-  font-size: 18px;
+.transactions-table td, .customer-table td {
+  padding: 12px;
+  text-align: left;
+  font-size: 1rem;
+  background-color: #fafafa;
 }
 
-.transactions-table td,
-.customer-table td {
-  background-color: #f8f9fa;
-}
-
-.transactions-table tr:nth-child(even) td,
-.customer-table tr:nth-child(even) td {
-  background-color: #e9ecef;
+.transactions-table tr:nth-child(even) td, .customer-table tr:nth-child(even) td {
+  background-color: #f1f1f1;
 }
 
 /* Customer Selector */
@@ -159,41 +256,44 @@ h1 {
 }
 
 .customer-selector select:focus {
-  border-color: #007bff;
+  border-color: var(--primary-color);
+}
+
+/* Transaction Row Styling */
+.transactions-table td {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.transactions-table td:nth-child(4), .customer-table td:nth-child(3) {
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+.transactions-table td:nth-child(5), .customer-table td:nth-child(4) {
+  text-transform: capitalize;
+}
+
+/* Hover Effects */
+.transactions-table tr:hover, .customer-table tr:hover {
+  background-color: #e9ecef;
+  transform: scale(1.02);
+  transition: all 0.3s ease;
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
-  /* Financial Summary Cards */
+@media screen and (max-width: 768px) {
   .financial-summary {
-      flex-direction: column;
-      align-items: center;
+      flex-wrap: wrap;
   }
 
   .summary-card {
-      width: 100%;
+      min-width: calc(50% - 15px);
       margin-bottom: 15px;
   }
 
-  /* Add Transaction Form */
-  .add-form {
-      flex-direction: column;
-      align-items: center;
-  }
-
-  .add-form input,
-  .add-form select,
-  .add-form button {
-      width: 100%;
-      margin-bottom: 10px;
-  }
-
-  /* Transactions Table */
-  .transactions-table th,
-  .transactions-table td,
-  .customer-table th,
-  .customer-table td {
-      font-size: 14px;
-      padding: 10px;
+  .transactions-table th, .transactions-table td,
+  .customer-table th, .customer-table td {
+      font-size: 0.9rem;
   }
 }
