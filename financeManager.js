@@ -1,164 +1,183 @@
-const financeManager = {
-    transactions: [],
-    customers: {},
+// DOM Elements
+const transactionsBody = document.getElementById("transactions-body");
+const customerSelect = document.getElementById("customer-select");
+const customerBody = document.getElementById("customer-body");
 
-    // Add a new transaction
-    addTransaction: function(customer, description, amount, type) {
-        const transaction = {
-            id: Date.now(),
-            date: new Date().toLocaleDateString(),
-            customer: customer,
-            description: description,
-            amount: parseFloat(amount),
-            type: type
-        };
+// Financial summary elements
+const gstAmountElement = document.getElementById("gst-amount");
+const paidGstAmountElement = document.getElementById("paid-gst-amount");
+const unpaidBillsCountElement = document.getElementById("bills-count");
+const paidBillsCountElement = document.getElementById("paid-bills-count");
+const receivablesAmountElement = document.getElementById("receivables-amount");
 
-        // Add the transaction to the global transactions list
-        this.transactions.push(transaction);
+// Load saved transactions on page load
+document.addEventListener("DOMContentLoaded", () => {
+    loadTransactions();
+    updateFinancialSummary();
+});
 
-        // Add the transaction to the specific customer's list
-        if (!this.customers[customer]) {
-            this.customers[customer] = [];
-        }
-        this.customers[customer].push(transaction);
-
-        // Update the dashboard and render the transactions
-        this.updateDashboard();
-        this.renderTransactions();
-        this.viewCustomerTransactions();
-    },
-
-    // Remove a transaction
-    removeTransaction: function(id) {
-        const index = this.transactions.findIndex(t => t.id === id);
-        if (index !== -1) {
-            const transaction = this.transactions[index];
-            this.transactions.splice(index, 1);
-
-            // Remove the transaction from the customer's history
-            this.customers[transaction.customer] = this.customers[transaction.customer].filter(t => t.id !== id);
-
-            // Update the dashboard and re-render the transactions
-            this.updateDashboard();
-            this.renderTransactions();
-            this.viewCustomerTransactions();
-        }
-    },
-
-    // Update the financial summary in the dashboard
-    updateDashboard: function() {
-        let gstPending = 0;
-        let paidGst = 0;
-        let unpaidBills = 0;
-        let paidBills = 0;
-        let receivables = 0;
-
-        this.transactions.forEach(transaction => {
-            switch (transaction.type) {
-                case 'GST':
-                    gstPending += transaction.amount;
-                    break;
-                case 'Paid GST':
-                    paidGst += transaction.amount;
-                    break;
-                case 'Bill':
-                    unpaidBills += 1;
-                    break;
-                case 'Paid Bill':
-                    paidBills += 1;
-                    break;
-                case 'Income':
-                    receivables += transaction.amount;
-                    break;
-            }
-        });
-
-        // Update the financial summary display
-        document.getElementById('gst-amount').textContent = `$${gstPending.toFixed(2)}`;
-        document.getElementById('paid-gst-amount').textContent = `$${paidGst.toFixed(2)}`;
-        document.getElementById('bills-count').textContent = unpaidBills;
-        document.getElementById('paid-bills-count').textContent = paidBills;
-        document.getElementById('receivables-amount').textContent = `$${receivables.toFixed(2)}`;
-    },
-
-    // Render all transactions in the global transaction table
-    renderTransactions: function() {
-        const tbody = document.getElementById('transactions-body');
-        tbody.innerHTML = '';
-
-        this.transactions.forEach(transaction => {
-            const row = tbody.insertRow();
-            row.innerHTML = `
-                <td>${transaction.date}</td>
-                <td>${transaction.customer}</td>
-                <td>${transaction.description}</td>
-                <td>$${transaction.amount.toFixed(2)}</td>
-                <td>${transaction.type}</td>
-                <td>
-                    <button onclick="financeManager.removeTransaction(${transaction.id})">
-                        Remove
-                    </button>
-                </td>
-            `;
-        });
-    },
-
-    // Render the selected customer's transactions
-    viewCustomerTransactions: function() {
-        const customer = document.getElementById('customer-select').value;
-        const tbody = document.getElementById('customer-body');
-        tbody.innerHTML = '';
-
-        if (customer && this.customers[customer]) {
-            this.customers[customer].forEach(transaction => {
-                const row = tbody.insertRow();
-                row.innerHTML = `
-                    <td>${transaction.date}</td>
-                    <td>${transaction.description}</td>
-                    <td>$${transaction.amount.toFixed(2)}</td>
-                    <td>${transaction.type}</td>
-                `;
-            });
-        }
-    },
-
-    // Populate customer names in the dropdown dynamically
-    updateCustomerSelect: function() {
-        const customerSelect = document.getElementById('customer-select');
-        customerSelect.innerHTML = `<option value="">Select Customer</option>`; // Reset the select list
-
-        Object.keys(this.customers).forEach(customer => {
-            const option = document.createElement('option');
-            option.value = customer;
-            option.textContent = customer;
-            customerSelect.appendChild(option);
-        });
-    }
-};
-
-// Add a new transaction (called when the "Add Transaction" button is clicked)
+// Add a new transaction
 function addNewTransaction() {
-    const customer = document.getElementById('customer-name').value.trim();
-    const description = document.getElementById('transaction-description').value.trim();
-    const amount = document.getElementById('transaction-amount').value.trim();
-    const type = document.getElementById('transaction-type').value;
+    const customerName = document.getElementById("customer-name").value.trim();
+    const description = document.getElementById("transaction-description").value.trim();
+    const amount = parseFloat(document.getElementById("transaction-amount").value);
+    const type = document.getElementById("transaction-type").value;
 
-    if (customer && description && amount && !isNaN(amount)) {
-        financeManager.addTransaction(customer, description, amount, type);
+    if (!customerName || !description || isNaN(amount)) {
+        alert("Please fill in all fields.");
+        return;
+    }
 
-        // Update customer dropdown with new customer
-        financeManager.updateCustomerSelect();
+    const transaction = {
+        date: new Date().toLocaleDateString(),
+        customer: customerName,
+        description: description,
+        amount: amount.toFixed(2),
+        type: type,
+    };
 
-        // Reset form fields
-        document.getElementById('customer-name').value = '';
-        document.getElementById('transaction-description').value = '';
-        document.getElementById('transaction-amount').value = '';
-    } else {
-        alert('Please fill out all fields correctly.');
+    // Save transaction and refresh the table
+    saveTransaction(transaction);
+    displayTransaction(transaction);
+    updateCustomerSelect(customerName);
+
+    // Update financial summary
+    updateFinancialSummary();
+
+    // Clear form inputs
+    document.getElementById("customer-name").value = "";
+    document.getElementById("transaction-description").value = "";
+    document.getElementById("transaction-amount").value = "";
+    document.getElementById("transaction-type").value = "Income";
+}
+
+// Save a transaction to Local Storage
+function saveTransaction(transaction) {
+    const transactions = JSON.parse(localStorage.getItem("transactions")) || [];
+    transactions.push(transaction);
+    localStorage.setItem("transactions", JSON.stringify(transactions));
+}
+
+// Load transactions from Local Storage
+function loadTransactions() {
+    const transactions = JSON.parse(localStorage.getItem("transactions")) || [];
+    transactions.forEach((transaction) => {
+        displayTransaction(transaction);
+        updateCustomerSelect(transaction.customer);
+    });
+}
+
+// Display a transaction in the main table
+function displayTransaction(transaction) {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+        <td>${transaction.date}</td>
+        <td>${transaction.customer}</td>
+        <td>${transaction.description}</td>
+        <td>$${transaction.amount}</td>
+        <td>${transaction.type}</td>
+        <td>
+            <button class="remove-btn" onclick="removeTransaction(this)">Remove</button>
+        </td>
+    `;
+    transactionsBody.appendChild(row);
+}
+
+// Update the customer dropdown menu
+function updateCustomerSelect(customer) {
+    if (![...customerSelect.options].some((option) => option.value === customer)) {
+        const option = document.createElement("option");
+        option.value = customer;
+        option.textContent = customer;
+        customerSelect.appendChild(option);
     }
 }
 
-// Automatically update the customer transaction history when a customer is selected
+// View transactions for the selected customer
 function viewCustomerTransactions() {
-    financeManager.viewCustomerTransactions();
+    const selectedCustomer = customerSelect.value;
+    customerBody.innerHTML = ""; // Clear the customer table
+
+    if (!selectedCustomer) return;
+
+    const transactions = JSON.parse(localStorage.getItem("transactions")) || [];
+    const customerTransactions = transactions.filter(
+        (transaction) => transaction.customer === selectedCustomer
+    );
+
+    customerTransactions.forEach((transaction) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${transaction.date}</td>
+            <td>${transaction.description}</td>
+            <td>$${transaction.amount}</td>
+            <td>${transaction.type}</td>
+        `;
+        customerBody.appendChild(row);
+    });
+}
+
+// Remove a transaction
+function removeTransaction(button) {
+    const row = button.parentElement.parentElement;
+    const customer = row.children[1].textContent;
+    const description = row.children[2].textContent;
+    const amount = parseFloat(row.children[3].textContent.replace("$", ""));
+    const type = row.children[4].textContent;
+
+    // Remove transaction from the table
+    row.remove();
+
+    // Remove transaction from Local Storage
+    const transactions = JSON.parse(localStorage.getItem("transactions")) || [];
+    const updatedTransactions = transactions.filter(
+        (t) =>
+            !(t.customer === customer && t.description === description && t.amount == amount && t.type === type)
+    );
+    localStorage.setItem("transactions", JSON.stringify(updatedTransactions));
+
+    // Refresh customer transactions if viewing
+    viewCustomerTransactions();
+
+    // Update financial summary
+    updateFinancialSummary();
+}
+
+// Update the financial summary
+function updateFinancialSummary() {
+    const transactions = JSON.parse(localStorage.getItem("transactions")) || [];
+    let pendingGst = 0,
+        paidGst = 0,
+        unpaidBills = 0,
+        paidBills = 0,
+        totalReceivables = 0;
+
+    transactions.forEach((transaction) => {
+        switch (transaction.type) {
+            case "GST":
+                pendingGst += parseFloat(transaction.amount);
+                break;
+            case "Paid GST":
+                paidGst += parseFloat(transaction.amount);
+                break;
+            case "Bill":
+                unpaidBills += 1;
+                totalReceivables += parseFloat(transaction.amount);
+                break;
+            case "Paid Bill":
+                paidBills += 1;
+                break;
+            case "Income":
+                totalReceivables += parseFloat(transaction.amount);
+                break;
+            default:
+                break;
+        }
+    });
+
+    gstAmountElement.textContent = `${pendingGst.toFixed(2)}`;
+    paidGstAmountElement.textContent = `${paidGst.toFixed(2)}`;
+    unpaidBillsCountElement.textContent = unpaidBills;
+    paidBillsCountElement.textContent = paidBills;
+    receivablesAmountElement.textContent = `${totalReceivables.toFixed(2)}`;
 }
