@@ -1,0 +1,42 @@
+const mongoose = require('mongoose');
+const li = new mongoose.Schema({
+  description:   { type:String, required:true },
+  hsn:           { type:String, default:'' },
+  quantity:      { type:Number, required:true, min:0 },
+  unit:          { type:String, default:'pcs' },
+  rate:          { type:Number, required:true, min:0 },
+  gstRate:       { type:Number, enum:[0,5,12,18,28], default:18 },
+  taxableAmount: { type:Number, default:0 },
+  cgst:          { type:Number, default:0 },
+  sgst:          { type:Number, default:0 },
+  igst:          { type:Number, default:0 },
+  totalAmount:   { type:Number, default:0 },
+}, { _id:false });
+
+const invoiceSchema = new mongoose.Schema({
+  user:           { type:mongoose.Schema.Types.ObjectId, ref:'User', required:true },
+  client:         { type:mongoose.Schema.Types.ObjectId, ref:'Client', required:true },
+  invoiceNumber:  { type:String, required:true },
+  invoiceDate:    { type:Date, required:true, default:Date.now },
+  dueDate:        { type:Date, required:true },
+  status:         { type:String, enum:['draft','sent','paid','partial','overdue','cancelled'], default:'draft' },
+  type:           { type:String, enum:['invoice','proforma','credit_note'], default:'invoice' },
+  gstType:        { type:String, enum:['intra','inter'], default:'intra' },
+  items:          [li],
+  subtotal:       { type:Number, default:0 },
+  totalCGST:      { type:Number, default:0 },
+  totalSGST:      { type:Number, default:0 },
+  totalIGST:      { type:Number, default:0 },
+  totalGST:       { type:Number, default:0 },
+  discount:       { type:Number, default:0 },
+  discountType:   { type:String, enum:['flat','percent'], default:'flat' },
+  grandTotal:     { type:Number, default:0 },
+  amountPaid:     { type:Number, default:0 },
+  balanceDue:     { type:Number, default:0 },
+  paymentMethod:  { type:String, default:'' },
+  paymentDate:    { type:Date },
+  paymentRef:     { type:String, default:'' },
+  notes:          { type:String, default:'' },
+  terms:          { type:String, default:'Payment due within 30 days.' },
+}, { timestamps:true });
+module.exports = mongoose.model('Invoice', invoiceSchema);
